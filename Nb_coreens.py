@@ -36,6 +36,13 @@ def dico_nb() :
                 break
     return dico_sino, dico_cor_pur
 
+def unites(number, type):
+    if type == "co":
+        ans1 = ref_cor_pur[str(number)]
+    elif type == "si":
+        ans1 = ref_sino[str(number)]
+    return ans1
+
 def dizaines(number, type) :
     if number > 10 and number < 101 and number % 10 == 0 :
         if type=="co" :
@@ -58,7 +65,12 @@ def centaines(number, type) :
     first_part = number // 100
     second_part = number % 100
     if type == "si":
-        diz=dizaines(second_part,"si")
+        if second_part < 10 and second_part > 0 :
+            diz = unites(second_part, "si")
+        elif second_part==0 :
+            diz=""
+        else :
+            diz=dizaines(second_part,"si")
         if first_part == 1:
             ans1 = ref_sino["100"] + diz
         else:
@@ -66,13 +78,23 @@ def centaines(number, type) :
         ans2=0
     elif type == "co":
         # première possibilité = sino uniquement
-        diz=dizaines(second_part,"si")
+        if second_part < 10 and second_part > 0 :
+            diz = unites(second_part, "si")
+        elif second_part==0 :
+            diz=""
+        else :
+            diz=dizaines(second_part,"si")
         if first_part == 1:
             ans1 = ref_sino["100"] + diz
         else:
             ans1 = ref_sino[str(first_part)] + ref_sino["100"] + diz
         # deuxième possibilité = composite sino coréen
-        diz=dizaines(second_part,"co")
+        if second_part < 10 and second_part > 0 :
+            diz = unites(second_part, "co")
+        elif second_part==0 :
+            diz=""
+        else :
+            diz=dizaines(second_part,"co")
         if first_part == 1:
             ans2 = ref_sino["100"] + diz
         else:
@@ -107,11 +129,8 @@ def milliers(number, type) :
 def construction_rep(number,type):
     #answer2 ne concerne que les nombres > 100 et le type "co" où deux écritures sont possibles
     if number < 11 :
-        if type=="co" :
-            answer1=ref_cor_pur[str(number)]
-        elif type=="si" :
-            answer1=ref_sino[str(number)]
-        answer2="0"
+        answer1=unites(number,type)
+        answer2=0
     elif number > 10 and number < 101 :
         answer1=dizaines(number,type)
         answer2=0
@@ -131,6 +150,8 @@ print("Programme valable jusqu'à 10000")
 
 ref_sino, ref_cor_pur = dico_nb()  #prise en compte des noms des nombres sino-coréens et coréens
 
+"""test, test2= construction_rep(6400, "co")
+print(test)"""
 
 nombre_a_reviser=input("Combien de nombre à réviser aujourd'hui?  ")
 
@@ -152,12 +173,45 @@ while sino != "CO" and sino != "Co" and sino != "co" and sino != "SI" and sino !
     print("Erreur dans le choix du type de nombre, co ou si seulement")
     sino = input("Réviser nombres coréens (\"co\") ou sino-coréens (\"si\") ?")
 
+nb_rep_justes=0
+
 if niveau == "s" :
     for i in range(1,int(nombre_a_reviser)+1):
         nombre=r.randint(0, 100)
+        reponse1,reponse2=construction_rep(nombre,sino)
+        rep_utilisateur=input("Comment écrire "+str(nombre)+" en coréen? ")
+        if rep_utilisateur==reponse1 :
+            print("Bravo")
+            nb_rep_justes+=1
+        else :
+            print("Réponse fausse. "+str(nombre)+" s'écrit "+ reponse1)
 else :
     for i in range(1,int(nombre_a_reviser)+1):
-        nombre=r.randint(0, 1000000)
+        nombre=r.randint(0, 10000)
+        print(nombre)
+        reponse1, reponse2 = construction_rep(nombre, sino)
+        if nombre > 100 and sino=="co":
+            rep_utilisateur1 = input("Comment écrire " + str(nombre) + " en système purement sino? ")
+            if rep_utilisateur1==reponse1 :
+                print("Bravo")
+                nb_rep_justes+=1
+            else :
+                print("Réponse fausse. "+str(nombre)+" s'écrit "+ reponse1)
+            rep_utilisateur2 = input("Comment écrire " + str(nombre) + " en système sino et coréen? ")
+            if rep_utilisateur2==reponse2 :
+                print("Bravo")
+                nb_rep_justes+=1
+            else :
+                print("Réponse fausse. "+str(nombre)+" s'écrit "+ reponse2)
+        else :
+            rep_utilisateur = input("Comment écrire " + str(nombre) + " en coréen? ")
+            if rep_utilisateur == reponse1:
+                print("Bravo")
+                nb_rep_justes += 1
+            else:
+                print("Réponse fausse. " + str(nombre) + " s'écrit " + reponse1)
 
-#exercice = input ("La date du jour en coréen ?")
+print(str(nb_rep_justes)+" réponses justes sur "+ str(nombre_a_reviser))
+
+
 print("Fin du programme de révisions")
