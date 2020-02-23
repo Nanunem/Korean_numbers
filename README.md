@@ -1,2 +1,2 @@
 # Korean_numbers
-Programme en français et sur python pour s'entraîner à l'écriture des nombres en coréens, jusqu'à 10 000 pour l'instant
+Review random Korean numbers up to 10,000
